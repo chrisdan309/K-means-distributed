@@ -19,6 +19,7 @@ public class TCPServer {
     // Send message to all connected clients
 
     String centroidMessage = "";
+    String vectorMessage = "";
     public void sendMessageToTCPServer(String message) {
         // clientCount = 6;
         if (clientCount == 0) {
@@ -26,7 +27,7 @@ public class TCPServer {
             System.exit(0);
         }
         String[] parts = message.split("/");
-        String vectorMessage = parts[0];
+        vectorMessage = parts[0];
         centroidMessage = parts[1];
         // System.out.println("Vector: " + vectorMessage);
         // System.out.println("Centroide: " + centroidMessage);

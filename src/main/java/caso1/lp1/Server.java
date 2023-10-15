@@ -102,7 +102,7 @@ public class Server {
                                 aux = aux.Scalar(peso, aux);
                                 centroides[contador] = centroides[contador].Add(centroides[contador], aux);
                                 centroides[contador].puntos += peso;
-                                System.out.println("Centroide " + contador + ": " + centroides[contador]);
+                                //System.out.println("Centroide " + contador + ": " + centroides[contador]);
                             }
                         }
                     }
@@ -111,12 +111,12 @@ public class Server {
                         centroides[i] = centroides[i].Scalar(1/centroides[i].puntos, centroides[i]);
                     }
 
-                    System.out.println("Centroides:");
+                    /*System.out.println("Centroides:");
                     for (Point centroide : centroides) {
                         System.out.println(centroide);
-                    }
+                    }*/
                     String oldCentroid = tcpServer.centroidMessage;
-                    System.out.println(oldCentroid);
+                    //System.out.println(oldCentroid);
                     String[] centroidParts = oldCentroid.split(" ");
                     Point[] oldCentroidPoints = new Point[contadorCentroides];
                     for (int i = 2; i < contadorCentroides + 2; i++) {
@@ -128,10 +128,10 @@ public class Server {
                         double y = Double.parseDouble(coordinatesParts[1]);
                         oldCentroidPoints[i-2] = new Point(name, x, y);
                     }
-                    System.out.println("Old Centroides:");
+                    /*System.out.println("Old Centroides:");
                     for (Point centroide : oldCentroidPoints) {
                         System.out.println(centroide);
-                    }
+                    }*/
                     // Verificar si el cambio es menor a 0.1 con la norma 2
                     double error = 0;
                     for (int i=0; i<centroides.length; i++) {
@@ -139,13 +139,65 @@ public class Server {
                     }
 
                     if (error > 0.1){
+                        System.out.println("Error: " + error);
                         System.out.println("Reenvia mensaje");
-                        String messageToSend = vectorMessage + "/" + centroidMessage;
-                        System.out.println(messageToSend);
-                        //sendToServer(message);
+                        // enviar centroide c1(0,2), c2(0.2,12)
+                        centroidMessage = "enviar centroide ";
+                        for (int i=0; i<centroides.length; i++) {
+                            if(i == centroides.length-1){
+                                centroidMessage += "c" + (i+1) + "(" + centroides[i].x + "," + centroides[i].y + ")";
+                            }
+                            else{
+                                centroidMessage += "c" + (i+1) + "(" + centroides[i].x + "," + centroides[i].y + "), ";
+                            }
+                        }
+                        //System.out.println(centroidMessage);
+
+                        String messageToSend = tcpServer.vectorMessage + "/" + centroidMessage;
+                        tcpServer.centroidMessage = centroidMessage;
+                        //System.out.println(messageToSend);
+                        // Reiniciar variables
+                        clientCount = 0;
+                        System.out.println("--------------------------------------------------");
+                        sendToServer(messageToSend);
                     }
                     else {
+                        System.out.println("Error: " + error);
                         System.out.println("Termina");
+                        // Separar vectormessage
+                        String[] vectorParts = vectorMessage.split(" ");
+                        int numVectores = vectorParts.length - 2;
+                        Point[] puntos = new Point[numVectores];
+                        for (int i = 2; i < numVectores + 2; i++) {
+
+                            String[] vectorPart = vectorParts[i].split("\\(");
+                            String name = vectorPart[0];
+                            String[] coordinates = vectorPart[1].split("\\)");
+                            String[] coordinatesParts = coordinates[0].split(",");
+                            double x = Double.parseDouble(coordinatesParts[0]);
+                            double y = Double.parseDouble(coordinatesParts[1]);
+                            //get number of cluster
+                            String clusterString = vectorParts[i].split("-")[1];
+                            clusterString = clusterString.substring(0, clusterString.length() - 1);
+                            int cluster = vectorParts[i].split("-").length > 1 ? Integer.parseInt(clusterString) : -1;
+                            puntos[i-2] = new Point(name, x, y);
+                            puntos[i-2].cluster = cluster;
+                        }
+
+                        // Imprimir puntos de cada centroide sus puntos asociados
+                        System.out.println("Puntos por centroide:\n");
+                        for (int i=0; i<centroides.length; i++) {
+                            System.out.println("Centroide " + (i+1) + ": " + centroides[i]);
+                            for (Point punto : puntos) {
+                                if (punto.cluster == i) {
+                                    System.out.println(punto);
+                                }
+                            }
+                        }
+
+
+
+
                         // Imprime los puntos con su cluster
                     }
 
