@@ -3,28 +3,10 @@ package caso1.lp2;
 public class KMeansAlgorithm {
     public Point[] data;
     public Point[] centroides;
-    public static int change = -1;
 
     public KMeansAlgorithm(Point[] data, Point[] centroides) {
         this.data = data;
         this.centroides = centroides;
-    }
-
-    public void Algorithm(){
-        while(change != 0){
-            change = 0;
-            asignarPuntos();
-            actualizarCentroides();
-        }
-        for (Point point : data){
-            System.out.println(point.toString());
-        }
-
-        System.out.println("Nuevos centroides");
-        for (Point point : centroides){
-            System.out.println(point.toString());
-        }
-
     }
 
     public void asignarPuntos() {
@@ -41,7 +23,6 @@ public class KMeansAlgorithm {
             centroides[cluster].puntos++;
             if(point.cluster != cluster){
                 point.cluster = (cluster);
-                change++;
             }
 
         }

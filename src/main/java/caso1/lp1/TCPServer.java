@@ -16,8 +16,6 @@ public class TCPServer {
         return this.messageListener;
     }
 
-    // Send message to all connected clients
-
     String centroidMessage = "";
     String vectorMessage = "";
     public void sendMessageToTCPServer(String message) {
@@ -29,18 +27,13 @@ public class TCPServer {
         String[] parts = message.split("/");
         vectorMessage = parts[0];
         centroidMessage = parts[1];
-        // System.out.println("Vector: " + vectorMessage);
-        // System.out.println("Centroide: " + centroidMessage);
-
         String[] partesVector = vectorMessage.split(" ");
         int contadorVectores = 0;
         for (String parte : partesVector) {
-        //    System.out.println("Parte: " + parte);
             if (parte.contains("(")) {
                 contadorVectores++;
             }
         }
-        // System.out.println("Numero de vectores: " + contadorVectores);
 
         int elementosPorParte = contadorVectores / clientCount;
         int elementosExtras = contadorVectores % clientCount;
@@ -57,77 +50,22 @@ public class TCPServer {
             }
             StringBuilder cadenaConPuntos = new StringBuilder("enviar vector ");
             for (int i = 0; i < elementosEnEstaParte; i++) {
-
                 if (indice <= contadorVectores) {
                     String aux = "a" + indice + "(";
                     for (String cad : partesVector) {
-                        //    System.out.println("Parte: " + parte);
                         if (cad.contains(aux)) {
                             cadenaConPuntos.append(cad).append(" ");
                         }
                     }
                     // Ingresa cada punto del vector
-                    //System.out.print(conjunto[indice] + " ");
                     indice++;
                 }
-
             }
             String cadenaAEnviar = cadenaConPuntos.append("/").append(centroidMessage).toString();
             System.out.print(cadenaAEnviar);
             connectedClients[parte].sendMessage(message);
             System.out.println();
         }
-
-
-       /* int inicio = 0;
-        System.out.println("Numero de vectores: " + contadorVectores);
-        for (int i = 0; i < clientCount; i++) {
-            String mensaje = "enviar ";
-            for (int j = inicio; j < inicio + tamanoParte; j++) {
-                mensaje += partes[j] + " ";
-            }
-            inicio += tamanoParte;
-            if (elementosExtras > 0) {
-                mensaje += partes[inicio] + " ";
-                inicio++;
-                elementosExtras--;
-            }
-            System.out.println("Mensaje: " + mensaje);
-            connectedClients[i+1].sendMessage(mensaje);
-        }*/
-
-
-
-
-
-        /*String[] parts = message.split(" ");
-        String command = parts[0];
-        String polynomial = parts[1];
-        double a = Double.parseDouble(parts[2]);
-        double b = Double.parseDouble(parts[3]);
-        int n = Integer.parseInt(parts[4]);
-        double interval = (b - a) / clientCount;
-        int numIntervals = n / clientCount;
-
-        for (int i = 1; i <= clientCount; i++) {
-            String start = Double.toString(a + (i - 1) * interval);
-            String end = Double.toString(a + i * interval);
-            String num = Integer.toString(numIntervals);
-
-            if (i == clientCount) {
-                end = Double.toString(b);
-                num = Integer.toString(n - (clientCount - 1) * numIntervals);
-            }
-
-            String newMessage = command + " " + polynomial + " " + start + " " + end + " " + num;
-
-            connectedClients[i].sendMessage(newMessage);
-            System.out.println("Enviado al Cliente " + i);
-        }*/
-        /*for (int i = 1; i <= clientCount; i++) {
-            //connectedClients[i].sendMessage(message);
-            System.out.println("Enviado al Cliente " + i);
-        }*/
     }
 
     public void run() {

@@ -6,7 +6,6 @@ public class Point {
     public int cluster;
     public double puntos;
 
-
     public Point(double x, double y){
         this.name = "";
         this.x = x;
