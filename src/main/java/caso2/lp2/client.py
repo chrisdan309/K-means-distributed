@@ -1,6 +1,6 @@
 from tcpclient import TcpClient
-from riemann_sum import RiemannSum, RiemannSumThread
-
+from KMeansAlgorihm import KMeansAlgorithm
+from Point import Point
 
 class Client:
     def __init__(self):
@@ -16,50 +16,73 @@ class Client:
         self.tcp_client = TcpClient("127.0.0.1", self.receive_from_client)
         self.tcp_client.run()
 
-    def receive_from_client(self, input_client):
-        print("Mensaje recibido:", input_client)
-        if "enviar" in input_client.strip():
-            parts = input_client.split(" ")
-            polynomial_expression = parts[1]
-            a = float(parts[2])
-            b = float(parts[3])
-            n = int(parts[4])
+    def receive_from_client(self, input_data):
 
-            print(f"Variables: a={a} b={b} n={n}\n")
-            self.process(polynomial_expression, a, b, n)
+        print("Mensaje recibido: " + input_data)
+        parts = input_data.split("/")
+        vector_message = parts[0]
+        centroid_message = parts[1]
+
+
+        vector_parts = vector_message.split(" ")
+        points = self.split_points(vector_parts)
+
+        centroid_parts = centroid_message.split(" ")
+        centroids = self.split_points(centroid_parts)
+
+        for point in points:
+            print(point)
+
+        for centroid in centroids:
+            print(centroid)
+
+        self.process(points, centroids)
+
+    def split_points(self, vector_parts):
+        num_vectors = len(vector_parts) - 2
+        puntos = []
+        for i in range(2, num_vectors + 2):
+            vector_part = vector_parts[i].split("(")
+            name = vector_part[0].strip()
+            #print(name)
+            coordinates = vector_part[1].split(")")
+            #print(coordinates)
+            coordinates_parts = coordinates[0].split(",")
+            #print(coordinates_parts)
+            x = float(coordinates_parts[0].strip())
+            y = float(coordinates_parts[1].strip())
+            #print(x)
+            #print(y)
+            #print(name)
+            punto = Point(y, x, name)
+            #print(punto)
+            puntos.append(punto)
+            #print("avervvevr", puntos)
+        
+        #print("unu",puntos)
+
+        return puntos
+
 
     def send_to_client(self, message):
-        if self.tcp_client:
+        if self.tcp_client is not None:
             self.tcp_client.send_message(message)
 
-    def process(self, polynomial, a, b, n):
-        riemann_sum = RiemannSum(a, b, n, polynomial)
-        num_threads = 6
-        n_i = n // num_threads
-        delta_x_i = float(b - a) / num_threads
-        threads = []
+    def process(self, points, centroids):
+        k_means_algorithm = KMeansAlgorithm(points, centroids)
+        k_means_algorithm.assign_points()
+        k_means_algorithm.update_centroids()
 
-        for i in range(num_threads):
-            start = a + i * delta_x_i
-            end = a + (i + 1) * delta_x_i
-            num_intervals = n_i
+        message = "Resultado vector "
+        for point in points:
+            message += f"{point.name}({point.y:.1f},{point.x:.1f})-{point.cluster}, "
+        message += "/Resultado centroide "
+        for centroid in centroids:
+            message += f"{centroid.name}({centroid.y:.1f},{centroid.x:.1f})-{centroid.puntos}, "
 
-            if i == num_threads - 1:
-                end = b
-                num_intervals = n - n_i * (num_threads - 1)
-
-            thread = RiemannSumThread(riemann_sum.terms, riemann_sum.coefficients, riemann_sum.exponents,
-                                      start, end, num_intervals, i, self.sums)
-            thread.start()
-            threads.append(thread)
-
-        for thread in threads:
-            thread.join()
-
-        partial_sum = sum(self.sums)
-
-        print("\nResultado del cliente:", partial_sum)
-        self.send_to_client("Resultado " + str(partial_sum))
+        print(message)
+        print("-----------------------------------------")
+        self.send_to_client(message)
 
 
 if __name__ == "__main__":
