@@ -16,13 +16,13 @@ public class Client extends Thread{
 
         String[] centroidParts = centroidMessage.split(" ");
         Point[] centroids = separarPuntos(centroidParts);
-        for (Point point : points) {
+        /*for (Point point : points) {
             System.out.println(point);
         }
 
         for (Point centroid : centroids) {
             System.out.println(centroid);
-        }
+        }*/
         process(points, centroids);
     }
 
@@ -56,7 +56,7 @@ public class Client extends Thread{
         }
 
         System.out.println(message);
-        System.out.println("-----------------------------------------");
+        //System.out.println("-----------------------------------------");
         messageToServer = message;
     }
 

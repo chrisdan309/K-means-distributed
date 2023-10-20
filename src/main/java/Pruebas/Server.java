@@ -6,6 +6,7 @@ public class Server {
 
 
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis(); // Registra el tiempo de inicio
         Server server = new Server();
         Scanner scanner = new Scanner(System.in);
         int numVectors, numCentroids, numberClients;
@@ -68,7 +69,7 @@ public class Server {
                     e.printStackTrace();
                 }
             }
-            System.out.println(client[0].getMessage());
+            //System.out.println(client[0].getMessage());
             Point[] newCentroids = new Point[numCentroids];
             for (int i = 0; i < numCentroids; i++) {
                 newCentroids[i] = new Point("c" + (i + 1), 0, 0);
@@ -125,10 +126,10 @@ public class Server {
                 break;
             }
         }
-        System.out.println("salimos");
 
-
-
+        long endTime = System.currentTimeMillis(); // Registra el tiempo de finalización
+        long executionTime = endTime - startTime; // Calcula la diferencia de tiempo
+        System.out.println("Tiempo de ejecucion: " + executionTime + " milisegundos");
 
     }
 
