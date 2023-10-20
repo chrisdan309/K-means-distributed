@@ -44,22 +44,13 @@ class Client:
         for i in range(2, num_vectors + 2):
             vector_part = vector_parts[i].split("(")
             name = vector_part[0].strip()
-            #print(name)
             coordinates = vector_part[1].split(")")
-            #print(coordinates)
             coordinates_parts = coordinates[0].split(",")
-            #print(coordinates_parts)
             x = float(coordinates_parts[0].strip())
             y = float(coordinates_parts[1].strip())
-            #print(x)
-            #print(y)
-            #print(name)
             punto = Point(y, x, name)
-            #print(punto)
             puntos.append(punto)
-            #print("avervvevr", puntos)
-        
-        #print("unu",puntos)
+
 
         return puntos
 
