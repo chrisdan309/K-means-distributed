@@ -55,7 +55,7 @@ public class Client extends Thread{
             message += centroid.name + "(" + centroid.x + "," + centroid.y + ")-" + centroid.puntos + ", ";
         }
 
-        System.out.println(message);
+        //System.out.println(message);
         //System.out.println("-----------------------------------------");
         messageToServer = message;
     }

@@ -20,8 +20,8 @@ public class Server {
         String vectorMessage = server.generateVectors("vector",numVectors);
         String centroidMessage = server.generateVectors("centroide",numCentroids);
 
-        System.out.println(vectorMessage);
-        System.out.println(centroidMessage);
+        //System.out.println(vectorMessage);
+        //System.out.println(centroidMessage);
         Client[] client = new Client[numberClients];
 
 
@@ -58,7 +58,7 @@ public class Server {
                 }
                 client[parte-1] = new Client(cadenaConPuntos, centroidMessage);
                 client[parte-1].start();
-                System.out.println();
+                //System.out.println();
             }
 
             // Esperar a los clientes
@@ -112,8 +112,8 @@ public class Server {
             double error = 0;
 
             if (error > 0.1) {
-                System.out.println("Error: " + error);
-                System.out.println("Reenvia mensaje");
+                //System.out.println("Error: " + error);
+                //System.out.println("Reenvia mensaje");
                 // enviar centroide c1(0,2), c2(0.2,12)
                 centroidMessage = "enviar centroide ";
                 for (int j = 0; j < newCentroids.length; j++) {
